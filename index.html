@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube URL Summarizer</title>
+</head>
+<body>
+    <h1>ClipCruncher</h1>
+    <form id="urlForm">
+        <label for="urlInput">Enter YouTube URL:</label><br>
+        <input type="text" id="urlInput" name="urlInput" required><br><br>
+        <button type="submit">Summarize</button>
+    </form>
+    <div id="summary"></div>
+    <div id="error" style="color: red;"></div> <!-- Error message placeholder -->
+
+    <script>
+        document.getElementById('urlForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const url = document.getElementById('urlInput').value.trim();
+
+            // Send the URL to Flask server for processing
+            fetch('/summary?url=' + encodeURIComponent(url))
+                .then(response => response.text())
+                .then(data => {
+                    if (data.startsWith('Error:')) {
+                        document.getElementById('summary').innerText = '';
+                        document.getElementById('error').innerText = data;
+                    } else {
+                        document.getElementById('error').innerText = '';
+                        document.getElementById('summary').innerText = data;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
